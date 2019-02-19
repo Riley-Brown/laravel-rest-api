@@ -38,17 +38,19 @@ class ItemsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            // required field for api
             'text' => 'required'
         ]);
 
         if($validator->fails()) {
-            $res = array('response' => $validator->messages(), 'success' => false);
-            return $res;
+            // res to send if text field empty
+            $request = array('response' => $validator->messages(), 'success' => false);
+            return $request;
         } else {
             // create item
             $item = new Item;
-            $item->text = $res->input('text');
-            $item->body = $res->input('body');
+            $item->text = $request->input('text');
+            $item->body = $request->input('body');
 
             // save item to DB
             $item->save();
