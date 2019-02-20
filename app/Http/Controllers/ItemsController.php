@@ -24,10 +24,6 @@ class ItemsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -78,10 +74,7 @@ class ItemsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
-    }
+  
 
     /**
      * Update the specified resource in storage.
@@ -92,7 +85,27 @@ class ItemsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            // required field for api
+            'text' => 'required'
+        ]);
+
+        if($validator->fails()) {
+            // res to send if text field empty
+            $request = array('response' => $validator->messages(), 'success' => false);
+            return $request;
+        } else {
+            // find item
+            $item = Item::find($id);
+            $item->text = $request->input('text');
+            $item->body = $request->input('body');
+
+            // update item in DB
+            $item->save();
+
+            // returns response to api
+            return response()->json($item);
+        }
     }
 
     /**
